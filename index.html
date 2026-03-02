@@ -7,14 +7,23 @@
 </head>
 <body>
 
-<div class="intro">
+<div class="menu">
 <h1>⚔ GUERREIRO DO ECLIPSE ⚔</h1>
-<p>Temporada 1</p>
-<button onclick="start()">Assistir</button>
+<p>Anime Interativo</p>
+
+<button onclick="continuar()">Continuar</button>
+<button onclick="novo()">Novo Jogo</button>
+
 </div>
 
 <script>
-function start(){
+function continuar(){
+let ep = localStorage.getItem("epAtual") || 0;
+window.location.href="episodio.html?ep="+ep;
+}
+
+function novo(){
+localStorage.setItem("epAtual",0);
 window.location.href="episodio.html?ep=0";
 }
 </script>
