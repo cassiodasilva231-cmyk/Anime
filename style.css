@@ -1,26 +1,43 @@
 body{
 margin:0;
-background:black;
+background:#000814;
 color:white;
 font-family:Arial;
 text-align:center;
 }
 
-.intro{
+.menu{
 margin-top:20%;
 }
 
 button{
-padding:15px 30px;
-background:red;
+padding:14px 26px;
+background:#ff003c;
 border:none;
 color:white;
 font-size:18px;
+margin:10px;
+border-radius:10px;
 cursor:pointer;
 }
 
 canvas{
 background:black;
-display:block;
 margin:auto;
+display:block;
+border:2px solid #222;
+}
+
+.hp{
+width:300px;
+height:14px;
+background:#222;
+margin:auto;
+border-radius:10px;
+overflow:hidden;
+}
+
+.hpbar{
+height:100%;
+background:#00ff88;
 }
