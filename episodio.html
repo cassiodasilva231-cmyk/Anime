@@ -8,11 +8,25 @@
 <body>
 
 <h2 id="titulo"></h2>
-<canvas id="anime" width="400" height="400"></canvas>
+
+<div>
+Player
+<div class="hp"><div id="playerBar" class="hpbar"></div></div>
+</div>
+
+<div>
+Inimigo
+<div class="hp"><div id="enemyBar" class="hpbar"></div></div>
+</div>
+
+<canvas id="anime" width="420" height="420"></canvas>
+
 <p id="fala"></p>
-<button onclick="proximo()">Próxima Cena</button>
+
+<div id="controles"></div>
 
 <script src="temporada1.js"></script>
+<script src="engine.js"></script>
 
 <script>
 
@@ -22,53 +36,98 @@ const ctx = canvas.getContext("2d");
 let params = new URLSearchParams(window.location.search);
 let epIndex = parseInt(params.get("ep")) || 0;
 
-let ep = episodios[epIndex];
-let cena = 0;
+salvarEp(epIndex);
 
+let ep = episodios[epIndex];
 document.getElementById("titulo").innerText = ep.titulo;
 
-function desenharHero(power=false){
-ctx.clearRect(0,0,400,400);
+let cena = 0;
+let enemyMax = ep.vida || 0;
+
+function narrar(txt){
+document.getElementById("fala").innerText = txt;
+
+let voz = new SpeechSynthesisUtterance(txt);
+voz.lang="pt-BR";
+speechSynthesis.speak(voz);
+}
+
+function desenhar(){
+ctx.clearRect(0,0,420,420);
 
 ctx.fillStyle="cyan";
 ctx.beginPath();
-ctx.arc(200,200,40,0,Math.PI*2);
+ctx.arc(120,220,30,0,Math.PI*2);
 ctx.fill();
 
-if(power){
-ctx.fillStyle="white";
+ctx.fillStyle="red";
 ctx.beginPath();
-ctx.arc(200,200,70,0,Math.PI*2);
+ctx.arc(320,220,30,0,Math.PI*2);
 ctx.fill();
 }
-}
 
-function narrar(texto){
-let fala = new SpeechSynthesisUtterance(texto);
-fala.lang="pt-BR";
-speechSynthesis.speak(fala);
-document.getElementById("fala").innerText = texto;
-}
+function proximaCena(){
 
-function proximo(){
-if(cena < ep.falas.length){
-narrar(ep.falas[cena]);
-if(epIndex==2) desenharHero(true);
-else desenharHero();
-cena++;
-}
-else{
-if(epIndex+1 < episodios.length){
-window.location.href="episodio.html?ep="+(epIndex+1);
-}
-else{
-alert("Fim da Temporada 1");
+epIndex++;
+
+if(epIndex < episodios.length){
+window.location.href="episodio.html?ep="+epIndex;
+}else{
+alert("Fim da temporada 1");
 window.location.href="index.html";
 }
 }
+
+function iniciarHistoria(){
+narrar(ep.falas[cena]);
+
+document.getElementById("controles").innerHTML=
+`<button onclick="seguir()">Continuar</button>`;
 }
 
-desenharHero();
+function seguir(){
+cena++;
+
+if(cena < ep.falas.length){
+narrar(ep.falas[cena]);
+}else{
+proximaCena();
+}
+}
+
+function iniciarLuta(){
+
+enemyHP = ep.vida;
+
+document.getElementById("controles").innerHTML=
+`<button onclick="ataque()">ATACAR</button>
+<button onclick="especial()">PODER</button>`;
+
+updateHP();
+}
+
+function especial(){
+let dano = Math.floor(Math.random()*40)+25;
+enemyHP -= dano;
+
+ctx.fillStyle="cyan";
+ctx.fillRect(200,0,10,420);
+
+if(enemyHP <= 0){
+proximaCena();
+}
+
+updateHP();
+}
+
+desenhar();
+
+if(ep.tipo === "historia"){
+iniciarHistoria();
+}
+else{
+iniciarLuta();
+}
 
 </script>
 
