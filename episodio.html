@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Episódio</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h2 id="titulo"></h2>
+<canvas id="anime" width="400" height="400"></canvas>
+<p id="fala"></p>
+<button onclick="proximo()">Próxima Cena</button>
+
+<script src="temporada1.js"></script>
+
+<script>
+
+const canvas = document.getElementById("anime");
+const ctx = canvas.getContext("2d");
+
+let params = new URLSearchParams(window.location.search);
+let epIndex = parseInt(params.get("ep")) || 0;
+
+let ep = episodios[epIndex];
+let cena = 0;
+
+document.getElementById("titulo").innerText = ep.titulo;
+
+function desenharHero(power=false){
+ctx.clearRect(0,0,400,400);
+
+ctx.fillStyle="cyan";
+ctx.beginPath();
+ctx.arc(200,200,40,0,Math.PI*2);
+ctx.fill();
+
+if(power){
+ctx.fillStyle="white";
+ctx.beginPath();
+ctx.arc(200,200,70,0,Math.PI*2);
+ctx.fill();
+}
+}
+
+function narrar(texto){
+let fala = new SpeechSynthesisUtterance(texto);
+fala.lang="pt-BR";
+speechSynthesis.speak(fala);
+document.getElementById("fala").innerText = texto;
+}
+
+function proximo(){
+if(cena < ep.falas.length){
+narrar(ep.falas[cena]);
+if(epIndex==2) desenharHero(true);
+else desenharHero();
+cena++;
+}
+else{
+if(epIndex+1 < episodios.length){
+window.location.href="episodio.html?ep="+(epIndex+1);
+}
+else{
+alert("Fim da Temporada 1");
+window.location.href="index.html";
+}
+}
+}
+
+desenharHero();
+
+</script>
+
+</body>
+</html>
